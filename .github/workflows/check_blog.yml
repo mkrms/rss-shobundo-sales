@@ -1,0 +1,29 @@
+name: Check Shobundo Blog
+
+on:
+  schedule:
+    # 15分ごとにチェック（日本時間考慮）
+    - cron: '*/15 * * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  check-blog:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install feedparser requests
+    
+    - name: Run check script
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      run: python check_blog.py
